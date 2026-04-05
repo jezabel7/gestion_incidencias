@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>UAGRM - Sistema de Incidencias</title>
+    <style>
+        :root {
+            --uagrm-blue: #004a87;
+            --uagrm-red: #da291c;
+            --bg-gray: #f4f7f6;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background-color: var(--bg-gray); 
+            margin: 0; padding: 20px;
+        }
+
+        .container { 
+            max-width: 650px; 
+            margin: auto; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 5px solid var(--uagrm-red);
+        }
+
+        h2 { 
+            color: var(--uagrm-blue); 
+            text-align: center; 
+            margin-top: 0;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        
+        label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: #444; 
+        }
+
+        input[type="text"], 
+        textarea, 
+        select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        /* Arreglo de los Checkboxes */
+        .grid-cats { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            background: #f9f9f9; 
+            padding: 15px; 
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .cat-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .cat-item input {
+            margin-right: 10px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-send { 
+            background: var(--uagrm-blue); 
+            color: white; 
+            border: none; 
+            padding: 15px; 
+            width: 100%; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn-send:hover { background: #003366; }
+
+        .footer-info {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📍 Reporte de Daños e Incidencias</h2>
+    
+    <form action="" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario()">
+        
+        <div class="form-group">
+            <label>Carnet de Identidad (CI):</label>
+            <input type="text" name="ci_denunciante" placeholder="Ej: 8934122" required>
+        </div>
+
+        <div class="form-group">
+            <label>Título del Problema:</label>
+            <input type="text" name="titulo" placeholder="Breve título del daño" required>
+        </div>
+
+        <div class="form-group">
+            <label>Descripción detallada:</label>
+            <textarea name="descripcion" rows="3" placeholder="Describe qué ocurrió..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>¿Qué tipo de daño es? (Mínimo uno):</label>
+            <div class="grid-cats">
+                <?php foreach($categorias as $c): ?>
+                    <label class="cat-item">
+                        <input type="checkbox" name="categorias[]" value="<?= $c['id_categoria'] ?>">
+                        <?= $c['nombre'] ?>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Predio Universitario:</label>
+            <select name="predio_txt" id="id_predio" onchange="filtrarModulos()" required>
+                <option value="">-- Seleccionar Predio --</option>
+                <?php foreach($predios as $p): ?>
+                    <option value="<?= $p['nombre'] ?>" data-id="<?= $p['id_predio'] ?>"><?= $p['nombre'] ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Módulo / Bloque:</label>
+            <select name="modulo_txt" id="id_modulo" required disabled>
+                <option value="">-- Primero elija un predio --</option>
+                <?php foreach($modulos as $m): ?>
+                    <option value="<?= $m['numero'] ?>" data-parent="<?= $m['id_predio'] ?>" style="display:none;"><?= $m['numero'] ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Aula o Referencia (Opcional):</label>
+            <input type="text" name="aula" placeholder="Ej: Aula 236-4, Baños planta alta, pasillo entrada">
+        </div>
+
+        <div class="form-group">
+            <label>Evidencia Fotográfica:</label>
+            <input type="file" name="foto" accept="image/*" required>
+        </div>
+
+        <button type="submit" class="btn-send" id="submitBtn">ENVIAR REPORTE</button>
+    </form>
+    
+    <div class="footer-info">
+        Universidad Autónoma Gabriel René Moreno - Gestión 2026
+    </div>
+</div>
+
+<script>
+/**
+ * Filtra los módulos dependiendo del predio seleccionado en el formulario  [cite: 84-91].
+ */
+function filtrarModulos() {
+    const predioSelect = document.getElementById('id_predio');
+    const moduloSelect = document.getElementById('id_modulo');
+    const selectedOption = predioSelect.options[predioSelect.selectedIndex];
+    const predioId = selectedOption.getAttribute('data-id');
+
+    moduloSelect.disabled = false;
+    moduloSelect.value = "";
+    
+    const options = moduloSelect.options;
+    for (let i = 0; i < options.length; i++) {
+        const opt = options[i];
+        if (opt.getAttribute('data-parent') === predioId || opt.value === "") {
+            opt.style.display = "block";
+        } else {
+            opt.style.display = "none";
+        }
+    }
+}
+
+/**
+ * Valida que al menos una categoría de la base de datos haya sido seleccionada .
+ */
+function validarFormulario() {
+    const checkboxes = document.querySelectorAll('input[name="categorias[]"]:checked');
+    
+    if (checkboxes.length === 0) {
+        alert("Por favor, selecciona al menos un Tipo de Daño para continuar.");
+        return false;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = "ENVIANDO DATOS...";
+    btn.style.opacity = "0.6";
+    btn.disabled = true;
+
+    return true; 
+}
+</script>
+
+</body>
+</html>
