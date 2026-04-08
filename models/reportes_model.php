@@ -62,5 +62,31 @@ class reportes_model {
         $res = $this->db->query($sql);
         return $res->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function get_todos_los_reportes() {
+        $sql = "SELECT r.*, e.descripcion AS estado_nombre, 
+                COALESCE(m.numero, p.nombre) AS nombre_lugar,
+                pr.nombre AS nombre_predio_padre
+                FROM reportaje r
+                JOIN estado e ON r.id_estado = e.id_estado
+                JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+                LEFT JOIN modulo m ON u.id_ubicacion = m.id_modulo
+                LEFT JOIN predio pr ON m.id_predio = pr.id_predio
+                LEFT JOIN predio p ON u.id_ubicacion = p.id_predio
+                ORDER BY r.fecha_creacion DESC";
+        return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Filtra reportes por predio para los Encargados (Ciudad o Campus).
+    public function get_reportes_por_predio($id_predio) {
+        $id_predio = (int)$id_predio;
+        $sql = "SELECT r.*, e.descripcion AS estado_nombre, m.numero AS nombre_lugar
+                FROM reportaje r
+                JOIN estado e ON r.id_estado = e.id_estado
+                JOIN modulo m ON r.id_ubicacion = m.id_modulo
+                WHERE m.id_predio = $id_predio
+                ORDER BY r.fecha_creacion DESC";
+        return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
+    }
 }
 ?>

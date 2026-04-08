@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>UAGRM Admin - Dashboard</title>
+    <style>
+        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; --success: #27ae60; --warning: #f1c40f; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; display: flex; }
+        
+        /* Sidebar Estilizado */
+        .sidebar { width: 250px; background: var(--uagrm-blue); height: 100vh; color: white; padding: 20px; position: fixed; }
+        .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        .nav-link { display: block; color: white; text-decoration: none; padding: 12px; border-radius: 5px; margin-bottom: 5px; }
+        .nav-link:hover, .active { background: rgba(255,255,255,0.1); border-left: 4px solid var(--uagrm-red); }
+
+        /* Contenido Principal */
+        .main-content {
+            margin-left: 250px; /* Se mantiene igual al ancho del sidebar */
+            padding: 60px;      /* Aumentamos de 40px a 60px para más "aire" */
+            width: calc(100% - 250px);
+            box-sizing: border-box; /* 👈 VITAL: Esto evita que el padding "empuje" el ancho total */
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            letter-spacing: -1px; /* Un toque estético de diseño moderno */
+        }
+        /* Tabla Pro */
+        .card-table { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 15px; text-align: left; color: #666; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 15px; border-top: 1px solid #eee; font-size: 0.9rem; }
+        
+        /* Badges de Estado */
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: white; }
+        .status-1 { background: var(--warning); } /* Pendiente */
+        .status-4 { background: var(--success); } /* Resuelto */
+        
+        .img-thumb { width: 45px; height: 45px; border-radius: 5px; object-fit: cover; border: 1px solid #ddd; }
+        .btn-action { padding: 6px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.8rem; }
+        .btn-action:hover { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>UAGRM Gestión</h2>
+    <p><small>Bienvenido, <?= $_SESSION['nombre'] ?></small></p>
+    <nav>
+        <a href="#" class="nav-link active">📊 Dashboard</a>
+        <a href="#" class="nav-link">👷 Usuarios</a>
+        <a href="index.php?c=usuarios&a=logout" class="nav-link" style="margin-top: 50px; color: #ff7675;">🔴 Cerrar Sesión</a>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="header">
+        <h1><?= $titulo_panel ?></h1>
+        <button class="btn-action">📥 Exportar PDF</button>
+    </div>
+
+    <div class="card-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Reporte</th>
+                    <th>Lugar</th>
+                    <th>Denunciante</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($reportes as $r): ?>
+                <tr>
+                    <td>
+                        <img src="uploads/<?= $r['foto'] ?>" class="img-thumb" onerror="this.src='https://via.placeholder.com/50'">
+                    </td>
+                    <td>
+                        <strong><?= $r['titulo'] ?></strong><br>
+                        <small style="color: #888;"><?= date('d/m/Y', strtotime($r['fecha_creacion'])) ?></small>
+                    </td>
+                    <td>
+                        <?= $r['nombre_lugar'] ?><br>
+                        <small style="color: var(--uagrm-blue);"><?= $r['nombre_predio_padre'] ?? '' ?></small>
+                    </td>
+                    <td>CI: <?= $r['denunciante'] ?></td>
+                    <td>
+                        <span class="badge status-<?= $r['id_estado'] ?>">
+                            <?= $r['estado_nombre'] ?>
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-action">👁️ Ver</button>
+                        <button class="btn-action">✏️ Gestionar</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <?php if(empty($reportes)): ?>
+                    <tr><td colspan="6" style="text-align:center; padding: 50px;">No hay incidencias reportadas en este sector.</td></tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
