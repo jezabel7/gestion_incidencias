@@ -105,7 +105,9 @@
                     </td>
                     <td>
                         <button class="btn-action">👁️ Ver</button>
-                        <button class="btn-action" onclick="abrirModal(<?= $r['id_reportaje'] ?>)">✏️ Gestionar</button>
+                        <button class="btn-action" onclick="abrirModal(<?= $r['id_reportaje'] ?>, <?= $r['id_predio_reporte'] ?? 0 ?>)">
+                            ✏️ Gestionar
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -135,16 +137,15 @@
                     <option value="4">🟢 Resuelto (Cerrar caso)</option>
                 </select>
             </div>
-
             <div id="seccion-tecnico" style="margin-bottom: 15px; display:none; background: #f0f7ff; padding: 10px; border-radius: 8px;">
                 <label style="font-weight:bold; display:block; margin-bottom:5px; color:var(--uagrm-blue);">👷 Asignar Responsable:</label>
+                
                 <select name="id_tecnico" id="select-tecnicos" class="form-control">
-                    <option value="1">-- Seleccionar Técnico --</option>
-                    <option value="1">Admin General (Tú)</option>
+                    <option value="">-- Seleccionar Técnico --</option>
                 </select>
+                
                 <p style="font-size:11px; color:#666; margin:0;">* Solo se muestran técnicos del predio correspondiente.</p>
             </div>
-
             <button type="submit" class="btn-save">GUARDAR CAMBIOS</button>
             <button type="button" onclick="cerrarModal()" style="background:none; border:none; color:grey; width:100%; margin-top:10px; cursor:pointer; font-size:13px;">← Cancelar y volver</button>
         </form>
@@ -153,9 +154,46 @@
 
 
 <script>
-function abrirModal(id) {
+// 1. Guardamos los técnicos en "memoria" de JS al cargar la página
+const listaMaestraTecnicos = [
+    <?php foreach($tecnicos as $t): ?>
+    {
+        id: "<?= $t['id_usuario'] ?>",
+        nombre: "<?= $t['nombre'] ?> <?= $t['apellido'] ?>",
+        predio: "<?= $t['id_predio'] ?>",
+        especialidades: "<?= $t['especialidades'] ?? 'General' ?>"
+    },
+    <?php endforeach; ?>
+];
+
+// 2. FUNCIÓN ÚNICA PARA ABRIR EL MODAL
+function abrirModal(id, idPredioReporte) {
+    // Debug para que veas en consola qué está pasando
+    console.log("Abriendo reporte:", id, "Predio:", idPredioReporte);
+
     document.getElementById('modal-id-text').innerText = id;
     document.getElementById('input-id-reporte').value = id;
+    
+    const selectTec = document.getElementById('select-tecnicos');
+    
+    // Limpiamos la lista actual para que no haya "fantasmas"
+    selectTec.innerHTML = '<option value="">-- Seleccionar Técnico --</option>';
+    
+    // Filtramos y llenamos el select solo con los que sirven
+    listaMaestraTecnicos.forEach(tecnico => {
+        if (String(tecnico.predio) === String(idPredioReporte)) {
+            const el = document.createElement('option');
+            el.value = tecnico.id;
+            el.textContent = `${tecnico.nombre} (${tecnico.especialidades})`;
+            selectTec.appendChild(el);
+        }
+    });
+
+    // Resetear el estado a "Pendiente" y ocultar el campo de técnico al inicio
+    document.getElementById('select-estado').value = "1";
+    controlarCampos();
+    
+    // Mostrar el modal
     document.getElementById('modalGestion').style.display = "block";
 }
 
@@ -164,35 +202,21 @@ function cerrarModal() {
 }
 
 /**
- * Controla qué campos se muestran según el estado elegido.
+ * Controla la visibilidad del técnico según el estado (Asignado/En Proceso)
  */
 function controlarCampos() {
     const estado = document.getElementById('select-estado').value;
     const seccionTecnico = document.getElementById('seccion-tecnico');
     const selectTecnicos = document.getElementById('select-tecnicos');
 
-    // Si el estado es "Asignado" (2) o "En Proceso" (3), mostramos el selector de técnicos
+    // Mostramos el técnico solo si el estado es 2 (Asignado) o 3 (En Proceso)
     if (estado == "2" || estado == "3") {
         seccionTecnico.style.display = "block";
-        selectTecnicos.required = true; // Obligamos a elegir a alguien
+        selectTecnicos.required = true;
     } else {
         seccionTecnico.style.display = "none";
         selectTecnicos.required = false;
     }
-}
-
-/**
- * Modificamos el abrirModal para que resetee los campos al abrir
- */
-function abrirModal(id) {
-    document.getElementById('modal-id-text').innerText = id;
-    document.getElementById('input-id-reporte').value = id;
-    
-    // Resetear el estado al abrir para que se oculte el técnico inicialmente
-    document.getElementById('select-estado').value = "1";
-    controlarCampos();
-    
-    document.getElementById('modalGestion').style.display = "block";
 }
 </script>
 

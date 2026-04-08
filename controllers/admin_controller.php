@@ -20,6 +20,7 @@ switch($accion) {
             $reportes = $r_model->get_reportes_por_predio($_SESSION['id_predio']);
             $titulo_panel = "Gestión de Incidencias - Mi Predio";
         }
+        $tecnicos = $r_model->get_todos_los_tecnicos();
         require_once("views/admin_dashboard_view.phtml");
         break;
 

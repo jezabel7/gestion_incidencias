@@ -66,7 +66,8 @@ class reportes_model {
     public function get_todos_los_reportes() {
         $sql = "SELECT r.*, e.descripcion AS estado_nombre, 
                 COALESCE(m.numero, p.nombre) AS nombre_lugar,
-                pr.nombre AS nombre_predio_padre
+                pr.nombre AS nombre_predio_padre,
+                COALESCE(m.id_predio, p.id_predio) AS id_predio_reporte
                 FROM reportaje r
                 JOIN estado e ON r.id_estado = e.id_estado
                 JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
@@ -80,7 +81,8 @@ class reportes_model {
     // Filtra reportes por predio para los Encargados (Ciudad o Campus).
     public function get_reportes_por_predio($id_predio) {
         $id_predio = (int)$id_predio;
-        $sql = "SELECT r.*, e.descripcion AS estado_nombre, m.numero AS nombre_lugar
+        $sql = "SELECT r.*, e.descripcion AS estado_nombre, m.numero AS nombre_lugar,
+                m.id_predio AS id_predio_reporte
                 FROM reportaje r
                 JOIN estado e ON r.id_estado = e.id_estado
                 JOIN modulo m ON r.id_ubicacion = m.id_modulo
@@ -107,6 +109,17 @@ class reportes_model {
         $sql = "UPDATE reportaje SET id_estado = $id_estado, id_usuario = $id_usuario 
                 WHERE id_reportaje = $id_reporte";
         return $this->db->query($sql);
+    }
+
+    public function get_todos_los_tecnicos() {
+        $sql = "SELECT u.id_usuario, u.nombre, u.apellido, u.id_predio, 
+                GROUP_CONCAT(c.nombre SEPARATOR ', ') AS especialidades
+                FROM usuario u
+                LEFT JOIN usuario_categoria uc ON u.id_usuario = uc.id_usuario
+                LEFT JOIN categoria c ON uc.id_categoria = c.id_categoria
+                WHERE u.rol = 'encargado'
+                GROUP BY u.id_usuario";
+        return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
 }
 ?>
