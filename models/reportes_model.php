@@ -88,5 +88,25 @@ class reportes_model {
                 ORDER BY r.fecha_creacion DESC";
         return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
+
+    //Obtiene técnicos filtrados por el predio del reporte para una asignación inteligente.
+    public function get_tecnicos_por_predio($id_predio) {
+        $id_predio = (int)$id_predio;
+        // Buscamos usuarios con rol encargado que pertenezcan al mismo predio del incidente.
+        $sql = "SELECT id_usuario, nombre, apellido FROM usuario 
+                WHERE rol = 'encargado' AND id_predio = $id_predio";
+        return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    //Actualiza el estado y el técnico asignado al reporte.
+    public function actualizar_gestion($id_reporte, $id_estado, $id_usuario) {
+        $id_reporte = (int)$id_reporte;
+        $id_estado = (int)$id_estado;
+        $id_usuario = (int)$id_usuario;
+
+        $sql = "UPDATE reportaje SET id_estado = $id_estado, id_usuario = $id_usuario 
+                WHERE id_reportaje = $id_reporte";
+        return $this->db->query($sql);
+    }
 }
 ?>

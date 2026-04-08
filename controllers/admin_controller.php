@@ -22,5 +22,20 @@ switch($accion) {
         }
         require_once("views/admin_dashboard_view.phtml");
         break;
+
+    case 'guardar_gestion':
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $id_rep = $_POST['id_reporte'];
+        $nuevo_estado = $_POST['nuevo_estado'];
+        $tecnico_asig = $_POST['id_tecnico'];
+
+        if ($r_model->actualizar_gestion($id_rep, $nuevo_estado, $tecnico_asig)) {
+            echo "<script>alert('Gestión actualizada correctamente'); window.location='index.php?c=admin&a=dashboard';</script>";
+        } else {
+            echo "<script>alert('Error al actualizar'); window.history.back();</script>";
+        }
+        exit();
+    }
+    break;
 }
 ?>
