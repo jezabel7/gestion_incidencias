@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>UAGRM - Inicio</title>
+    <style>
+        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .container { text-align: center; max-width: 800px; padding: 20px; }
+        h1 { color: var(--uagrm-blue); margin-bottom: 40px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .card { 
+            background: white; padding: 40px; border-radius: 15px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-decoration: none;
+            transition: transform 0.3s, border-color 0.3s; border-bottom: 8px solid #ddd;
+        }
+        .card:hover { transform: translateY(-10px); }
+        .reportar { border-color: var(--uagrm-red); }
+        .seguimiento { border-color: var(--uagrm-blue); }
+        .card h3 { color: #333; margin-bottom: 10px; font-size: 1.4rem; }
+        .card p { color: #666; font-size: 0.9rem; }
+        .icon { font-size: 50px; margin-bottom: 15px; display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SISTEMA DE GESTIÓN DE INCIDENCIAS UAGRM</h1>
+        <div class="grid">
+            <a href="index.php?c=reportes&a=nuevo" class="card reportar">
+                <span class="icon">🛠️</span>
+                <h3>Reportar Daño</h3>
+                <p>Informa sobre problemas de infraestructura en tu módulo.</p>
+            </a>
+            <a href="index.php?c=reportes&a=consulta" class="card seguimiento">
+                <span class="icon">🔍</span>
+                <h3>Seguimiento</h3>
+                <p>Consulta el estado de tus reportes enviados con tu CI.</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

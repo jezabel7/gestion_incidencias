@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>UAGRM - Seguimiento</title>
+    <style>
+        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: var(--uagrm-blue); border-bottom: 3px solid var(--uagrm-red); padding-bottom: 10px; }
+        .search-box { margin-bottom: 30px; background: #eee; padding: 20px; border-radius: 8px; }
+        input { padding: 10px; width: 70%; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background: var(--uagrm-blue); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: #f8f9fa; color: var(--uagrm-blue); }
+        .status { padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; color: white; }
+        .Pendiente { background: #f1c40f; } .Asignado { background: #3498db; }
+        .En { background: #e67e22; } /* Para "En Proceso" */ .Resuelto { background: #2ecc71; }
+        .img-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; cursor: pointer; }
+        .back-link { display: inline-block; margin-top: 20px; color: var(--uagrm-blue); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.php" class="back-link">← Volver al Inicio</a>
+        <h2>Mis Reportes Enviados</h2>
+        
+        <div class="search-box">
+            <form action="index.php?c=reportes&a=consulta" method="POST">
+                <input type="text" name="ci_busqueda" placeholder="Ingresa tu CI para buscar..." required>
+                <button type="submit">BUSCAR</button>
+            </form>
+        </div>
+
+        <?php if(isset($mis_reportes)): ?>
+            <?php if(count($mis_reportes) > 0): ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Título</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                            <th>Foto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($mis_reportes as $r): ?>
+                        <tr>
+                            <td><?= date('d/m/Y', strtotime($r['fecha_creacion'])) ?></td>
+                            <td><?= $r['titulo'] ?></td>
+                            <td><small><?= $r['ubicacion_info'] ?></small></td>
+                            <td>
+                                <span class="status <?= explode(' ', $r['estado_nombre'])[0] ?>">
+                                    <?= $r['estado_nombre'] ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if($r['foto']): ?>
+                                    <img src="uploads/<?= $r['foto'] ?>" class="img-preview" onclick="window.open(this.src)">
+                                <?php else: ?>
+                                    Sin foto
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <p style="color:red;">No se encontraron reportes con el CI proporcionado.</p>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
+</body>
+</html>

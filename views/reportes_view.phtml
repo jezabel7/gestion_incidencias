@@ -105,7 +105,7 @@
 <body>
 
 <div class="container">
-    <h2>📍 Reporte de Daños e Incidencias</h2>
+    <h2>Reporte de Daños e Incidencias</h2>
     
     <form action="" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario()">
         
@@ -148,16 +148,18 @@
 
         <div class="form-group">
             <label>Módulo / Bloque:</label>
-            <select name="modulo_txt" id="id_modulo" required disabled>
+            <select name="id_modulo_real" id="id_modulo" required disabled>
                 <option value="">-- Primero elija un predio --</option>
                 <?php foreach($modulos as $m): ?>
-                    <option value="<?= $m['numero'] ?>" data-parent="<?= $m['id_predio'] ?>" style="display:none;"><?= $m['numero'] ?></option>
+                    <option value="<?= $m['id_modulo'] ?>" data-parent="<?= $m['id_predio'] ?>" style="display:none;">
+                        <?= $m['numero'] ?>
+                    </option>
                 <?php endforeach; ?>
             </select>
         </div>
 
         <div class="form-group">
-            <label>Aula o Referencia (Opcional):</label>
+            <label>Aula o Referencia:</label>
             <input type="text" name="aula" placeholder="Ej: Aula 236-4, Baños planta alta, pasillo entrada">
         </div>
 
@@ -170,13 +172,13 @@
     </form>
     
     <div class="footer-info">
-        Universidad Autónoma Gabriel René Moreno - Gestión 2026
+        Universidad Autónoma Gabriel René Moreno
     </div>
 </div>
 
 <script>
 /**
- * Filtra los módulos dependiendo del predio seleccionado en el formulario  [cite: 84-91].
+ * Filtra los módulos dependiendo del predio seleccionado en el formulario 
  */
 function filtrarModulos() {
     const predioSelect = document.getElementById('id_predio');
