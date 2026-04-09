@@ -66,27 +66,31 @@ class reportes_model {
     public function get_todos_los_reportes() {
         $sql = "SELECT r.*, e.descripcion AS estado_nombre, 
                 COALESCE(m.numero, p.nombre) AS nombre_lugar,
-                pr.nombre AS nombre_predio_padre,
-                COALESCE(m.id_predio, p.id_predio) AS id_predio_reporte
+                COALESCE(m.id_predio, p.id_predio) AS id_predio_reporte,
+                /* CORREGIDO: reportaje_categoria (con JA) */
+                (SELECT GROUP_CONCAT(id_categoria) FROM reportaje_categoria WHERE id_reportaje = r.id_reportaje) AS ids_categorias_reporte
                 FROM reportaje r
                 JOIN estado e ON r.id_estado = e.id_estado
                 JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
                 LEFT JOIN modulo m ON u.id_ubicacion = m.id_modulo
-                LEFT JOIN predio pr ON m.id_predio = pr.id_predio
                 LEFT JOIN predio p ON u.id_ubicacion = p.id_predio
                 ORDER BY r.fecha_creacion DESC";
         return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
 
-    // Filtra reportes por predio para los Encargados (Ciudad o Campus).
     public function get_reportes_por_predio($id_predio) {
         $id_predio = (int)$id_predio;
-        $sql = "SELECT r.*, e.descripcion AS estado_nombre, m.numero AS nombre_lugar,
-                m.id_predio AS id_predio_reporte
+        $sql = "SELECT r.*, e.descripcion AS estado_nombre, 
+                COALESCE(m.numero, p.nombre) AS nombre_lugar,
+                COALESCE(m.id_predio, p.id_predio) AS id_predio_reporte,
+                /* 👈 AÑADIDO: También necesitamos las categorías aquí */
+                (SELECT GROUP_CONCAT(id_categoria) FROM reportaje_categoria WHERE id_reportaje = r.id_reportaje) AS ids_categorias_reporte
                 FROM reportaje r
                 JOIN estado e ON r.id_estado = e.id_estado
-                JOIN modulo m ON r.id_ubicacion = m.id_modulo
-                WHERE m.id_predio = $id_predio
+                JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+                LEFT JOIN modulo m ON u.id_ubicacion = m.id_modulo
+                LEFT JOIN predio p ON u.id_ubicacion = p.id_predio
+                WHERE (m.id_predio = $id_predio OR p.id_predio = $id_predio)
                 ORDER BY r.fecha_creacion DESC";
         return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
@@ -113,7 +117,8 @@ class reportes_model {
 
     public function get_todos_los_tecnicos() {
         $sql = "SELECT u.id_usuario, u.nombre, u.apellido, u.id_predio, 
-                GROUP_CONCAT(c.nombre SEPARATOR ', ') AS especialidades
+                GROUP_CONCAT(c.nombre SEPARATOR ', ') AS nombres_especialidades,
+                GROUP_CONCAT(c.id_categoria SEPARATOR ',') AS ids_especialidades
                 FROM usuario u
                 LEFT JOIN usuario_categoria uc ON u.id_usuario = uc.id_usuario
                 LEFT JOIN categoria c ON uc.id_categoria = c.id_categoria

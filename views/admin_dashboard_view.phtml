@@ -105,7 +105,7 @@
                     </td>
                     <td>
                         <button class="btn-action">👁️ Ver</button>
-                        <button class="btn-action" onclick="abrirModal(<?= $r['id_reportaje'] ?>, <?= $r['id_predio_reporte'] ?? 0 ?>)">
+                        <button class="btn-action" onclick="abrirModal(<?= $r['id_reportaje'] ?>, <?= $r['id_predio_reporte'] ?? 0 ?>, '<?= $r['ids_categorias_reporte'] ?? '' ?>')">
                             ✏️ Gestionar
                         </button>
                     </td>
@@ -161,39 +161,61 @@ const listaMaestraTecnicos = [
         id: "<?= $t['id_usuario'] ?>",
         nombre: "<?= $t['nombre'] ?> <?= $t['apellido'] ?>",
         predio: "<?= $t['id_predio'] ?>",
-        especialidades: "<?= $t['especialidades'] ?? 'General' ?>"
+        nombres_espec: "<?= $t['nombres_especialidades'] ?? 'General' ?>",
+        // Convertimos la cadena "1,2,3" en un verdadero array de JavaScript
+        ids_espec: "<?= $t['ids_especialidades'] ?>".split(',') 
     },
     <?php endforeach; ?>
 ];
 
-// 2. FUNCIÓN ÚNICA PARA ABRIR EL MODAL
-function abrirModal(id, idPredioReporte) {
-    // Debug para que veas en consola qué está pasando
-    console.log("Abriendo reporte:", id, "Predio:", idPredioReporte);
+function abrirModal(id, idPredioReporte, idsCategoriasReporte) {
+    // 🚩 Debug: Verificamos qué listas estamos recibiendo
+    console.log("Categorías del reporte:", idsCategoriasReporte);
 
     document.getElementById('modal-id-text').innerText = id;
     document.getElementById('input-id-reporte').value = id;
     
     const selectTec = document.getElementById('select-tecnicos');
-    
-    // Limpiamos la lista actual para que no haya "fantasmas"
     selectTec.innerHTML = '<option value="">-- Seleccionar Técnico --</option>';
     
-    // Filtramos y llenamos el select solo con los que sirven
+    // Convertimos la lista del reporte en un array: "1,8" -> ["1", "8"]
+    const categoriasReporte = String(idsCategoriasReporte).split(',');
+
+    let especialistasEncontrados = 0;
+
     listaMaestraTecnicos.forEach(tecnico => {
-        if (String(tecnico.predio) === String(idPredioReporte)) {
+        const mismoPredio = String(tecnico.predio) === String(idPredioReporte);
+        
+        // Verificamos si existe AL MENOS una coincidencia entre las listas
+        // (Si el técnico sabe hacer ALGO de lo que el reporte pide)
+        const esEspecialista = tecnico.ids_espec.some(idEsp => 
+            categoriasReporte.includes(String(idEsp).trim())
+        );
+
+        if (mismoPredio && esEspecialista) {
             const el = document.createElement('option');
             el.value = tecnico.id;
-            el.textContent = `${tecnico.nombre} (${tecnico.especialidades})`;
+            el.textContent = `${tecnico.nombre} (${tecnico.nombres_espec})`;
             selectTec.appendChild(el);
+            especialistasEncontrados++;
         }
     });
 
-    // Resetear el estado a "Pendiente" y ocultar el campo de técnico al inicio
+    // Plan B: Si no hay nadie específico, cargar a todos los del predio
+    if (especialistasEncontrados === 0) {
+        console.warn("Sin especialistas exactos. Cargando personal del predio...");
+        listaMaestraTecnicos.forEach(tecnico => {
+            if (String(tecnico.predio) === String(idPredioReporte)) {
+                const el = document.createElement('option');
+                el.value = tecnico.id;
+                el.textContent = `${tecnico.nombre} (${tecnico.nombres_espec}) - Gral`;
+                selectTec.appendChild(el);
+            }
+        });
+    }
+
     document.getElementById('select-estado').value = "1";
     controlarCampos();
-    
-    // Mostrar el modal
     document.getElementById('modalGestion').style.display = "block";
 }
 
