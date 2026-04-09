@@ -68,7 +68,9 @@
 <div class="main-content">
     <div class="header">
         <h1><?= $titulo_panel ?></h1>
-        <button class="btn-action">📥 Exportar PDF</button>
+        <a href="index.php?c=admin&a=exportar_pdf_general" class="btn-action" style="text-decoration: none;">
+            📥 Exportar PDF
+        </a>
     </div>
 
     <div class="card-table">
@@ -104,7 +106,6 @@
                         </span>
                     </td>
                     <td>
-                        <button class="btn-action">👁️ Ver</button>
                         <button class="btn-action" onclick="abrirModal(<?= $r['id_reportaje'] ?>, <?= $r['id_predio_reporte'] ?? 0 ?>, '<?= $r['ids_categorias_reporte'] ?? '' ?>')">
                             ✏️ Gestionar
                         </button>
