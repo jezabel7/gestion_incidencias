@@ -60,7 +60,9 @@
     <p><small>Bienvenido, <?= $_SESSION['nombre'] ?></small></p>
     <nav>
         <a href="#" class="nav-link active">📊 Dashboard</a>
-        <a href="#" class="nav-link">👷 Usuarios</a>
+        <a href="index.php?c=usuarios&a=gestion" class="nav-link <?= ($accion == 'gestion') ? 'active' : '' ?>">
+            👷 Usuarios
+        </a>
         <a href="index.php?c=usuarios&a=logout" class="nav-link" style="margin-top: 50px; color: #ff7675;">🔴 Cerrar Sesión</a>
     </nav>
 </div>
