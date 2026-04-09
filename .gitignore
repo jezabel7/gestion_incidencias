@@ -1,8 +1,10 @@
-
 .vscode/
 .DS_Store
 Thumbs.db
+desktop.ini
 
 uploads/*
 
 !uploads/index.html
+
+lib/dompdf/
