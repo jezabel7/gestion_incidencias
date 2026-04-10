@@ -117,4 +117,24 @@ class reportes_model {
                 WHERE rol = 'encargado' AND id_predio = $id_predio";
         return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function get_reportes_por_usuario($id_usuario) {
+        $id_usuario = (int)$id_usuario;
+        $sql = "SELECT r.*, e.descripcion AS estado_nombre, 
+                COALESCE(m.numero, p.nombre) AS nombre_lugar
+                FROM reportaje r
+                JOIN estado e ON r.id_estado = e.id_estado
+                JOIN ubicacion u ON r.id_ubicacion = u.id_ubicacion
+                LEFT JOIN modulo m ON u.id_ubicacion = m.id_modulo
+                LEFT JOIN predio p ON u.id_ubicacion = p.id_predio
+                WHERE r.id_usuario = $id_usuario
+                ORDER BY r.id_estado ASC, r.fecha_creacion DESC";
+        return $this->db->query($sql)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function actualizar_estado_simple($id_reporte, $id_estado) {
+        $id_reporte = (int)$id_reporte;
+        $id_estado = (int)$id_estado;
+        return $this->db->query("UPDATE reportaje SET id_estado = $id_estado WHERE id_reportaje = $id_reporte");
+    }
 }

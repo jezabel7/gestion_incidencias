@@ -60,4 +60,10 @@ class usuarios_model {
         }
         return false;
     }
+
+    public function actualizar_password($id_usuario, $nuevo_pass_hash) {
+        $id_usuario = (int)$id_usuario;
+        $sql = "UPDATE usuario SET pass = '$nuevo_pass_hash' WHERE id_usuario = $id_usuario";
+        return $this->db->query($sql);
+    }
 }

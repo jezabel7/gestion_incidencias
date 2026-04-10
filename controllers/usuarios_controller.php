@@ -14,21 +14,44 @@ switch($accion) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ci = $_POST['ci'];
             $pass = $_POST['password'];
-
             $usuario = $u_model->buscar_por_ci($ci); 
 
-            // Validación segura mediante verificación de hash
             if ($usuario && password_verify($pass, $usuario['pass'])) { 
-                $_SESSION['user_id']   = $usuario['id_usuario'];
-                $_SESSION['nombre']    = $usuario['nombre'];
-                $_SESSION['rol']       = $usuario['rol']; 
+                $_SESSION['user_id'] = $usuario['id_usuario'];
+                $_SESSION['nombre'] = $usuario['nombre'];
+                $_SESSION['rol'] = $usuario['rol']; 
                 $_SESSION['id_predio'] = $usuario['id_predio']; 
 
-                header("Location: index.php?c=admin&a=dashboard");
+                // 🛡️ VERIFICACIÓN DE SEGURIDAD:
+                if (password_verify('password123', $usuario['pass'])) {
+                    header("Location: index.php?c=usuarios&a=cambiar_pass_view");
+                } else {
+                    header("Location: index.php?c=admin&a=dashboard");
+                }
                 exit();
             } else {
                 $error = "CI o contraseña incorrectos.";
                 require_once("views/login_view.phtml");
+            }
+        }
+        break;
+
+    case 'cambiar_pass_view':
+        require_once("views/cambiar_pass_view.phtml");
+        break;
+
+    case 'procesar_cambio_pass':
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $pass1 = $_POST['pass_nueva'];
+            $pass2 = $_POST['pass_confirmar'];
+
+            if ($pass1 === $pass2 && !empty($pass1)) {
+                $hash = password_hash($pass1, PASSWORD_DEFAULT);
+                $u_model->actualizar_password($_SESSION['user_id'], $hash);
+                echo "<script>alert('Contraseña actualizada. Inicia sesión de nuevo.'); window.location='index.php?c=usuarios&a=logout';</script>";
+            } else {
+                $error = "Las contraseñas no coinciden.";
+                require_once("views/cambiar_pass_view.phtml");
             }
         }
         break;

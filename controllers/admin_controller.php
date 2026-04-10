@@ -21,14 +21,14 @@ switch($accion) {
     case 'dashboard':
         if ($_SESSION['rol'] == 'admin') {
             $reportes = $r_model->get_todos_los_reportes();
+            $tecnicos = $r_model->get_todos_los_tecnicos();
             $titulo_panel = "Panel General - Todos los Predios";
+            require_once("views/admin_dashboard_view.phtml");
         } else {
-            $reportes = $r_model->get_reportes_por_predio($_SESSION['id_predio']);
-            $titulo_panel = "Gestión de Incidencias - Mi Predio";
+            $reportes = $r_model->get_reportes_por_usuario($_SESSION['user_id']);
+            $titulo_panel = "Mis Incidencias Asignadas";
+            require_once("views/encargado_dashboard_view.phtml");
         }
-        
-        $tecnicos = $r_model->get_todos_los_tecnicos();
-        require_once("views/admin_dashboard_view.phtml");
         break;
 
     // Gestión de Incidencias - Actualización de estado y asignación técnica
@@ -46,6 +46,14 @@ switch($accion) {
             exit();
         }
         break;
+
+    // Vista del Encargado
+    case 'actualizar_estado_daño':
+    if ($_SESSION['rol'] == 'encargado' && isset($_POST['id_reporte'])) {
+        $r_model->actualizar_estado_simple($_POST['id_reporte'], $_POST['nuevo_estado']);
+        header("Location: index.php?c=admin&a=dashboard");
+    }
+    break;
 
     // Generación de Reportes PDF - Reporte General Institucional
     case 'exportar_pdf_general':
