@@ -1,15 +1,25 @@
 # Sistema de Gestión de Incidencias - UAGRM
 
-Este es un proyecto desarrollado para la materia de **Arquitectura de SW**
+Proyecto desarrollado para la materia de **Arquitectura de Software** (Ingeniería de Sistemas). Este sistema optimiza el reporte y mantenimiento de la infraestructura universitaria mediante una plataforma centralizada.
 
-El sistema permite a los estudiantes reportar daños en la infraestructura de los diferentes módulos y predios universitarios, facilitando la gestión para el equipo de mantenimiento.
+## Arquitectura del Sistema
+El software está construido bajo el patrón de diseño **MVC (Modelo-Vista-Controlador)**, garantizando una separación clara de responsabilidades:
+- **Modelos:** Gestión de datos y lógica de negocio con MySQLi.
+- **Vistas:** Interfaces dinámicas desarrolladas en PHTML y CSS institucional.
+- **Controladores:** Orquestación de peticiones y flujo de la aplicación.
 
-### Características actuales
-- **Arquitectura MVC:** Separación de lógica, datos y vistas.
-- **Gestión de Ubicaciones:** Soporte para Ciudad Universitaria y Campus Universitario.
-- **Reportes Dinámicos:** Subida de imágenes y selección de múltiples categorías de daño.
-- **Seguridad:** Conexión protegida y manejo de archivos en el servidor.
+## Características Implementadas
+- **Reporte Público:** Los estudiantes pueden registrar daños subiendo evidencia fotográfica y seleccionando categorías técnicas.
+- **Dashboard Administrativo:** Panel de control para el monitoreo en tiempo real de todos los predios.
+- **Gestión Inteligente (CU3):** Asignación de técnicos basada en su especialidad y ubicación geográfica.
+- **Seguridad y Perfiles:** Autenticación robusta con hasheo de contraseñas y control de acceso por roles.
+- **Reportes Institucionales:** Generación automática de documentos PDF para auditoría interna.
 
-### Tecnologías utilizadas
-- PHP (Programación orientada a objetos)
-- MySQL (Base de datos relacional)
+## Stack Tecnológico
+- **Lenguaje:** PHP.
+- **Base de Datos:** MySQL.
+- **Reportes:** Dompdf Library.
+- **Frontend:** Vanilla JavaScript y CSS3.
+
+---
+© 2026 - Facultad de Ingeniería en Ciencias de la Computación y Telecomunicaciones
