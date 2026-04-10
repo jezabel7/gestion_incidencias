@@ -4,66 +4,55 @@
     <meta charset="UTF-8">
     <title>UAGRM - Gestión de Usuarios</title>
     <style>
-        /* Estilos Unificados (Copiados de Admin Dashboard) */
-        :root { 
-            --uagrm-blue: #004a87; 
-            --uagrm-red: #da291c; 
-            --success: #27ae60; 
-            --warning: #f1c40f; 
-        }
+        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; --success: #27ae60; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; display: flex; }
         
-        /* Sidebar Estilizado - Identidad Visual UAGRM */
+        /* Sidebar (Copiado exacto del Dashboard) */
         .sidebar { width: 250px; background: var(--uagrm-blue); height: 100vh; color: white; padding: 20px; position: fixed; }
         .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
         .nav-link { display: block; color: white; text-decoration: none; padding: 12px; border-radius: 5px; margin-bottom: 5px; }
         .nav-link:hover, .active { background: rgba(255,255,255,0.1); border-left: 4px solid var(--uagrm-red); }
 
-        /* Contenido Principal */
+        /* Contenido Principal (Asegurando los 60px de aire) */
         .main-content {
             margin-left: 250px;
             padding: 60px;
             width: calc(100% - 250px);
             box-sizing: border-box;
         }
+
+        /* Header Sincronizado */
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .header h1 {
             margin: 0;
             font-size: 1.8rem;
-            letter-spacing: -1px;
+            letter-spacing: -1px; /* El toque moderno del dashboard */
         }
 
-        /* Botón de Agregar (Refinado) */
+        /* Botón Adaptado (Ahora tiene el mismo tamaño que el de PDF) */
         .btn-add { 
-            background: var(--uagrm-blue); 
+            padding: 6px 12px; /* Mismo padding que .btn-action */
+            border-radius: 4px; 
+            border: 1px solid #ddd; 
+            background: var(--uagrm-blue); /* Lo mantenemos azul para destacar, pero con tamaño pequeño */
             color: white; 
-            padding: 8px 16px; 
-            border-radius: 6px; 
-            text-decoration: none; 
-            font-weight: bold; 
-            font-size: 0.9rem;
+            cursor: pointer; 
+            font-size: 0.8rem; /* Mismo tamaño de fuente que .btn-action */
+            font-weight: bold;
             transition: 0.3s;
-            border: none;
-            cursor: pointer;
         }
-        .btn-add:hover { background: #003366; transform: translateY(-2px); }
+        .btn-add:hover { background: #003366; }
 
         /* Tabla Estilo Pro */
         .card-table { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #f8f9fa; padding: 15px; text-align: left; color: #666; font-size: 0.85rem; text-transform: uppercase; }
         td { padding: 15px; border-top: 1px solid #eee; font-size: 0.9rem; }
-        
-        /* Ajuste específico para el CI */
-        .col-ci { width: 120px; font-weight: bold;}
-        
-        .btn-action { padding: 6px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.8rem; margin-right: 5px; }
-        .btn-action:hover { background: #f8f9fa; }
+        .col-ci { width: 130px; font-weight: bold; color: var(--uagrm-blue); }
 
-        /* Modales */
+        /* Modal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
         .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .modal-header { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
         .form-control { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
         .btn-save { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; }
     </style>
@@ -72,10 +61,10 @@
 
 <div class="sidebar">
     <h2>UAGRM Gestión</h2>
-    <p><small>Bienvenido, <?= $_SESSION['nombre'] ?></small></p>
+    <p><small>Bienvenido, Admin</small></p>
     <nav>
-        <a href="index.php?c=admin&a=dashboard" class="nav-link <?= ($accion == 'dashboard') ? 'active' : '' ?>">📊 Dashboard</a>
-        <a href="index.php?c=usuarios&a=gestion" class="nav-link <?= ($accion == 'gestion') ? 'active' : '' ?>">👷 Usuarios</a>
+        <a href="index.php?c=admin&a=dashboard" class="nav-link">📊 Dashboard</a>
+        <a href="index.php?c=usuarios&a=gestion" class="nav-link active">👷 Usuarios</a>
         <a href="index.php?c=usuarios&a=logout" class="nav-link" style="margin-top: 50px; color: #ff7675;">🔴 Cerrar Sesión</a>
     </nav>
 </div>
@@ -83,35 +72,26 @@
 <div class="main-content">
     <div class="header">
         <h1><?= $titulo_panel ?></h1>
-        <button class="btn-add" onclick="abrirModalUsuario()">+ Nuevo Encargado</button>
+        <button class="btn-add" onclick="abrirModal()">+ Nuevo Encargado</button>
     </div>
 
     <div class="card-table">
         <table>
             <thead>
                 <tr>
-                    <th class="col-ci">CI</th>
+                    <th class="col-ci">CI (Carnet)</th>
                     <th>Nombre Completo</th>
-                    <th>Rol</th>
+                    <th>Especialidades</th> 
                     <th>Predio Asignado</th>
-                    <th style="text-align: center;">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach($lista_usuarios as $user): ?>
                 <tr>
                     <td class="col-ci"><?= $user['ci'] ?></td>
-                    <td><?= $user['nombre'] ?> <?= $user['apellido'] ?></td>
-                    <td>
-                        <span style="color: <?= ($user['rol'] == 'admin') ? 'var(--uagrm-red)' : '#333' ?>; font-weight: bold;">
-                            <?= ucfirst($user['rol']) ?>
-                        </span>
-                    </td>
-                    <td><?= $user['nombre_predio'] ?? '<span style="color:#999 italic">Acceso Global</span>' ?></td>
-                    <td style="text-align: center;">
-                        <button class="btn-action">✏️ Editar</button>
-                        <button class="btn-action" style="color:var(--uagrm-red); border-color: #fab1a0;">🗑️ Borrar</button>
-                    </td>
+                    <td><strong><?= $user['nombre'] ?> <?= $user['apellido'] ?></strong><br><small><?= ucfirst($user['rol']) ?></small></td>
+                    <td><small><?= $user['nombres_especialidades'] ?? 'General' ?></small></td>
+                    <td><?= $user['nombre_predio'] ?? 'Global' ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -121,56 +101,40 @@
 
 <div id="modalUsuario" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3 style="margin:0; color:var(--uagrm-blue);">Registrar Personal</h3>
-        </div>
+        <h3 style="margin-top:0; color:var(--uagrm-blue);">Registrar Nuevo Encargado</h3>
+        <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">
+            * La contraseña inicial será: <b>password123</b>
+        </p>
         <form action="index.php?c=usuarios&a=guardar" method="POST">
-            <label style="font-size: 0.8rem; font-weight: bold;">Carnet de Identidad:</label>
-            <input type="text" name="ci" class="form-control" required placeholder="Ej: 8216306">
-            
-            <div style="display: flex; gap: 10px;">
-                <div style="flex:1;">
-                    <label style="font-size: 0.8rem; font-weight: bold;">Nombre:</label>
-                    <input type="text" name="nombre" class="form-control" required>
-                </div>
-                <div style="flex:1;">
-                    <label style="font-size: 0.8rem; font-weight: bold;">Apellido:</label>
-                    <input type="text" name="apellido" class="form-control" required>
-                </div>
-            </div>
-
-            <label style="font-size: 0.8rem; font-weight: bold;">Contraseña Inicial:</label>
-            <input type="password" name="password" class="form-control" required>
-
-            <label style="font-size: 0.8rem; font-weight: bold;">Rol:</label>
-            <select name="rol" class="form-control">
-                <option value="encargado">Encargado de Predio</option>
-                <option value="admin">Administrador</option>
+            <label>CI:</label>
+            <input type="text" name="ci" class="form-control" placeholder="Ej: 8216306" required>
+            <label>Nombre:</label>
+            <input type="text" name="nombre" class="form-control" required>
+            <label>Apellido:</label>
+            <input type="text" name="apellido" class="form-control" required>
+            <label>Especialidades:</label>
+            <select name="especialidades[]" class="form-control" multiple style="height: 100px;">
+                <?php foreach($categorias as $cat): ?>
+                    <option value="<?= $cat['id_categoria'] ?>"><?= $cat['nombre'] ?></option>
+                <?php endforeach; ?>
             </select>
-
-            <label style="font-size: 0.8rem; font-weight: bold;">Predio:</label>
-            <select name="id_predio" class="form-control">
-                <option value="">-- Sin Predio (Admin) --</option>
+            <label>Asignar Predio:</label>
+            <select name="id_predio" class="form-control" required>
+                <option value="">-- Seleccionar Predio --</option>
                 <?php foreach($predios as $p): ?>
                     <option value="<?= $p['id_predio'] ?>"><?= $p['nombre'] ?></option>
                 <?php endforeach; ?>
             </select>
-            
-            <button type="submit" class="btn-save">CREAR USUARIO</button>
-            <button type="button" onclick="cerrarModalUser()" style="background:none; border:none; color:grey; width: 100%; margin-top:10px; cursor:pointer;">Cancelar</button>
+            <button type="submit" class="btn-save">CREAR CUENTA</button>
+            <button type="button" onclick="cerrarModal()" style="width:100%; border:none; background:none; cursor:pointer; color:gray; margin-top:10px;">Cancelar</button>
         </form>
     </div>
 </div>
 
 <script>
-    function abrirModalUsuario() { document.getElementById('modalUsuario').style.display = "block"; }
-    function cerrarModalUser() { document.getElementById('modalUsuario').style.display = "none"; }
-    
-    // Cerrar si hacen clic fuera del modal
-    window.onclick = function(event) {
-        let modal = document.getElementById('modalUsuario');
-        if (event.target == modal) { modal.style.display = "none"; }
-    }
+    function abrirModal() { document.getElementById('modalUsuario').style.display = "block"; }
+    function cerrarModal() { document.getElementById('modalUsuario').style.display = "none"; document.querySelector('form').reset(); }
+    window.onclick = function(event) { if (event.target == document.getElementById('modalUsuario')) { cerrarModal(); } }
 </script>
 
 </body>
