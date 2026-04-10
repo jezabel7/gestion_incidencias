@@ -1,5 +1,5 @@
 <?php
-// 1. Cargamos la librería al inicio para que esté disponible
+// Librerías de generación de reportes
 require_once 'lib/dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -7,7 +7,7 @@ use Dompdf\Options;
 require_once("models/reportes_model.php");
 $r_model = new reportes_model();
 
-// 🛡️ SEGURIDAD: Solo personal logueado entra aquí
+// SEGURIDAD: Control de acceso para personal autorizado (Admin y Encargados)
 if (!isset($_SESSION['rol']) || ($_SESSION['rol'] != 'admin' && $_SESSION['rol'] != 'encargado')) {
     header("Location: index.php?c=usuarios");
     exit();
@@ -16,6 +16,8 @@ if (!isset($_SESSION['rol']) || ($_SESSION['rol'] != 'admin' && $_SESSION['rol']
 $accion = isset($_GET['a']) ? $_GET['a'] : 'dashboard';
 
 switch($accion) {
+
+    // Dashboard Principal - Visualización de incidencias por rol
     case 'dashboard':
         if ($_SESSION['rol'] == 'admin') {
             $reportes = $r_model->get_todos_los_reportes();
@@ -24,10 +26,12 @@ switch($accion) {
             $reportes = $r_model->get_reportes_por_predio($_SESSION['id_predio']);
             $titulo_panel = "Gestión de Incidencias - Mi Predio";
         }
+        
         $tecnicos = $r_model->get_todos_los_tecnicos();
         require_once("views/admin_dashboard_view.phtml");
         break;
 
+    // Gestión de Incidencias - Actualización de estado y asignación técnica
     case 'guardar_gestion':
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $id_rep = $_POST['id_reporte'];
@@ -43,31 +47,29 @@ switch($accion) {
         }
         break;
 
-    // 🚀 NUEVO CASE: Exportar PDF General
+    // Generación de Reportes PDF - Reporte General Institucional
     case 'exportar_pdf_general':
-        // 1. Los datos vienen del modelo (usamos la misma lógica del dashboard)
         $reportes = $r_model->get_todos_los_reportes();
         $titulo_reporte = "Reporte General de Incidencias UAGRM";
 
-        // 2. Configuración de Dompdf
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
-        $options->set('isRemoteEnabled', true); // Vital para que cargue el logo
+        $options->set('isRemoteEnabled', true); 
         $dompdf = new Dompdf($options);
 
-        // 3. Capturamos el HTML de la vista
         ob_start();
         include 'views/pdf_reporte_general_view.php';
         $html = ob_get_clean();
 
-        // 4. Generación
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
-        // 5. Descarga automática
         $dompdf->stream("Reporte_UAGRM_".date('d-m-Y').".pdf", ["Attachment" => false]);
         exit();
         break;
+
+    default:
+        header("Location: index.php?c=admin&a=dashboard");
+        break;
 }
-?>

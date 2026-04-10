@@ -4,53 +4,33 @@
     <meta charset="UTF-8">
     <title>UAGRM - Gestión de Usuarios</title>
     <style>
-        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; --success: #27ae60; }
+        :root { 
+            --uagrm-blue: #004a87; 
+            --uagrm-red: #da291c; 
+            --success: #27ae60; 
+        }
+
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; display: flex; }
         
-        /* Sidebar (Copiado exacto del Dashboard) */
-        .sidebar { width: 250px; background: var(--uagrm-blue); height: 100vh; color: white; padding: 20px; position: fixed; }
-        .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        .sidebar { width: 250px; background: var(--uagrm-blue); height: 100vh; color: white; padding: 20px; position: fixed; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; margin-top: 0; }
         .nav-link { display: block; color: white; text-decoration: none; padding: 12px; border-radius: 5px; margin-bottom: 5px; }
         .nav-link:hover, .active { background: rgba(255,255,255,0.1); border-left: 4px solid var(--uagrm-red); }
 
-        /* Contenido Principal (Asegurando los 60px de aire) */
-        .main-content {
-            margin-left: 250px;
-            padding: 60px;
-            width: calc(100% - 250px);
-            box-sizing: border-box;
-        }
+        .main-content { margin-left: 250px; padding: 60px; width: calc(100% - 250px); box-sizing: border-box; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; height: 45px; }
+        .header h1 { margin: 0; font-size: 1.8rem; letter-spacing: -1px; }
 
-        /* Header Sincronizado */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            letter-spacing: -1px; /* El toque moderno del dashboard */
-        }
-
-        /* Botón Adaptado (Ahora tiene el mismo tamaño que el de PDF) */
-        .btn-add { 
-            padding: 6px 12px; /* Mismo padding que .btn-action */
-            border-radius: 4px; 
-            border: 1px solid #ddd; 
-            background: var(--uagrm-blue); /* Lo mantenemos azul para destacar, pero con tamaño pequeño */
-            color: white; 
-            cursor: pointer; 
-            font-size: 0.8rem; /* Mismo tamaño de fuente que .btn-action */
-            font-weight: bold;
-            transition: 0.3s;
-        }
+        .btn-add { padding: 6px 12px; border-radius: 4px; border: 1px solid #ddd; background: var(--uagrm-blue); color: white; cursor: pointer; font-size: 0.8rem; font-weight: bold; transition: 0.3s; height: 40px; display: inline-flex; align-items: center; }
         .btn-add:hover { background: #003366; }
 
-        /* Tabla Estilo Pro */
         .card-table { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #f8f9fa; padding: 15px; text-align: left; color: #666; font-size: 0.85rem; text-transform: uppercase; }
         td { padding: 15px; border-top: 1px solid #eee; font-size: 0.9rem; }
         .col-ci { width: 130px; font-weight: bold; color: var(--uagrm-blue); }
 
-        /* Modal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
         .modal-content { background: white; margin: 5% auto; padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .form-control { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
@@ -102,29 +82,27 @@
 <div id="modalUsuario" class="modal">
     <div class="modal-content">
         <h3 style="margin-top:0; color:var(--uagrm-blue);">Registrar Nuevo Encargado</h3>
-        <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">
-            * La contraseña inicial será: <b>password123</b>
-        </p>
+        <p style="font-size: 0.8rem; color: #666; margin-bottom: 20px;">* Contraseña inicial: <b>password123</b></p>
+        
         <form action="index.php?c=usuarios&a=guardar" method="POST">
-            <label>CI:</label>
-            <input type="text" name="ci" class="form-control" placeholder="Ej: 8216306" required>
-            <label>Nombre:</label>
-            <input type="text" name="nombre" class="form-control" required>
-            <label>Apellido:</label>
-            <input type="text" name="apellido" class="form-control" required>
-            <label>Especialidades:</label>
+            <input type="text" name="ci" class="form-control" placeholder="CI" required>
+            <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
+            <input type="text" name="apellido" class="form-control" placeholder="Apellido" required>
+
+            <label style="font-size:0.8rem; font-weight:bold;">Especialidades:</label>
             <select name="especialidades[]" class="form-control" multiple style="height: 100px;">
                 <?php foreach($categorias as $cat): ?>
                     <option value="<?= $cat['id_categoria'] ?>"><?= $cat['nombre'] ?></option>
                 <?php endforeach; ?>
             </select>
-            <label>Asignar Predio:</label>
+
             <select name="id_predio" class="form-control" required>
                 <option value="">-- Seleccionar Predio --</option>
                 <?php foreach($predios as $p): ?>
                     <option value="<?= $p['id_predio'] ?>"><?= $p['nombre'] ?></option>
                 <?php endforeach; ?>
             </select>
+
             <button type="submit" class="btn-save">CREAR CUENTA</button>
             <button type="button" onclick="cerrarModal()" style="width:100%; border:none; background:none; cursor:pointer; color:gray; margin-top:10px;">Cancelar</button>
         </form>

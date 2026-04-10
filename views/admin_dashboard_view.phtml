@@ -4,53 +4,45 @@
     <meta charset="UTF-8">
     <title>UAGRM Admin - Dashboard</title>
     <style>
-        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; --success: #27ae60; --warning: #f1c40f; }
+        :root { 
+            --uagrm-blue: #004a87; 
+            --uagrm-red: #da291c; 
+            --success: #27ae60; 
+            --warning: #f1c40f; 
+        }
+
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; display: flex; }
         
-        /* Sidebar Estilizado */
-        .sidebar { width: 250px; background: var(--uagrm-blue); height: 100vh; color: white; padding: 20px; position: fixed; }
-        .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        .sidebar { width: 250px; background: var(--uagrm-blue); height: 100vh; color: white; padding: 20px; position: fixed; box-sizing: border-box; }
+        .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; margin-top: 0; }
         .nav-link { display: block; color: white; text-decoration: none; padding: 12px; border-radius: 5px; margin-bottom: 5px; }
         .nav-link:hover, .active { background: rgba(255,255,255,0.1); border-left: 4px solid var(--uagrm-red); }
 
-        /* Contenido Principal */
-        .main-content {
-            margin-left: 250px; /* Se mantiene igual al ancho del sidebar */
-            padding: 60px;      /* Aumentamos de 40px a 60px para más "aire" */
-            width: calc(100% - 250px);
-            box-sizing: border-box; /* 👈 VITAL: Esto evita que el padding "empuje" el ancho total */
-        }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            letter-spacing: -1px; /* Un toque estético de diseño moderno */
-        }
-        /* Tabla Pro */
+        .main-content { margin-left: 250px; padding: 60px; width: calc(100% - 250px); box-sizing: border-box; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; height: 45px; }
+        .header h1 { margin: 0; font-size: 1.8rem; letter-spacing: -1px; }
+
         .card-table { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         th { background: #f8f9fa; padding: 15px; text-align: left; color: #666; font-size: 0.85rem; text-transform: uppercase; }
         td { padding: 15px; border-top: 1px solid #eee; font-size: 0.9rem; }
         
-        /* Badges de Estado */
-        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: white; }
-        .status-1 { background: var(--warning); } /* Pendiente */
-        .status-4 { background: var(--success); } /* Resuelto */
-        
         .img-thumb { width: 45px; height: 45px; border-radius: 5px; object-fit: cover; border: 1px solid #ddd; }
-        .btn-action { padding: 6px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.8rem; }
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; color: white; }
+        
+        .status-1 { background-color: #f1c40f; color: #000; } 
+        .status-2 { background-color: #3498db; color: #fff; } 
+        .status-3 { background-color: #e67e22; color: #fff; } 
+        .status-4 { background-color: #27ae60; color: #fff; }
+
+        .btn-action { padding: 6px 12px; border-radius: 4px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 0.8rem; height: 40px; display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
         .btn-action:hover { background: #f8f9fa; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
         .modal-content { background: white; margin: 10% auto; padding: 30px; border-radius: 12px; width: 400px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .modal-header { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
-        .form-control { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; }
+        .form-control { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
         .btn-save { background: var(--success); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        /* Colores de Estado - Estándar de Ingeniería */
-        .status-1 { background-color: #f1c40f; color: #000; } /* Amarillo - Pendiente */
-        .status-2 { background-color: #3498db; color: #fff; } /* Azul - Asignado */
-        .status-3 { background-color: #e67e22; color: #fff; } /* Naranja - En Proceso */
-        .status-4 { background-color: #27ae60; color: #fff; } /* Verde - Resuelto */
     </style>
 </head>
 <body>
@@ -60,9 +52,7 @@
     <p><small>Bienvenido, <?= $_SESSION['nombre'] ?></small></p>
     <nav>
         <a href="#" class="nav-link active">📊 Dashboard</a>
-        <a href="index.php?c=usuarios&a=gestion" class="nav-link <?= ($accion == 'gestion') ? 'active' : '' ?>">
-            👷 Usuarios
-        </a>
+        <a href="index.php?c=usuarios&a=gestion" class="nav-link">👷 Usuarios</a>
         <a href="index.php?c=usuarios&a=logout" class="nav-link" style="margin-top: 50px; color: #ff7675;">🔴 Cerrar Sesión</a>
     </nav>
 </div>
@@ -70,9 +60,7 @@
 <div class="main-content">
     <div class="header">
         <h1><?= $titulo_panel ?></h1>
-        <a href="index.php?c=admin&a=exportar_pdf_general" class="btn-action" style="text-decoration: none;">
-            📥 Exportar PDF
-        </a>
+        <a href="index.php?c=admin&a=exportar_pdf_general" class="btn-action">📥 Exportar PDF</a>
     </div>
 
     <div class="card-table">
@@ -108,9 +96,7 @@
                         </span>
                     </td>
                     <td>
-                        <button class="btn-action" onclick="abrirModal(<?= $r['id_reportaje'] ?>, <?= $r['id_predio_reporte'] ?? 0 ?>, '<?= $r['ids_categorias_reporte'] ?? '' ?>')">
-                            ✏️ Gestionar
-                        </button>
+                        <button class="btn-action" onclick="abrirModal(<?= $r['id_reportaje'] ?>, <?= $r['id_predio_reporte'] ?? 0 ?>, '<?= $r['ids_categorias_reporte'] ?? '' ?>')">✏️ Gestionar</button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -124,40 +110,34 @@
 
 <div id="modalGestion" class="modal">
     <div class="modal-content">
-        <div class="modal-header">
-            <h3 style="margin:0; color:var(--uagrm-blue);">⚙️ Gestionar Incidencia #<span id="modal-id-text"></span></h3>
-        </div>
+        <h3 style="margin-top:0; color:var(--uagrm-blue);">⚙️ Gestionar Incidencia #<span id="modal-id-text"></span></h3>
         
         <form action="index.php?c=admin&a=guardar_gestion" method="POST">
             <input type="hidden" name="id_reporte" id="input-id-reporte">
             
-            <div style="margin-bottom: 15px;">
-                <label style="font-weight:bold; display:block; margin-bottom:5px;">Cambiar Estado:</label>
-                <select name="nuevo_estado" id="select-estado" class="form-control" onchange="controlarCampos()" required>
-                    <option value="1">🟡 Pendiente (Sin revisar)</option>
-                    <option value="2">🔵 Asignado (Enviar técnico)</option>
-                    <option value="3">🟠 En Proceso (Reparación actual)</option>
-                    <option value="4">🟢 Resuelto (Cerrar caso)</option>
-                </select>
-            </div>
-            <div id="seccion-tecnico" style="margin-bottom: 15px; display:none; background: #f0f7ff; padding: 10px; border-radius: 8px;">
+            <label style="font-weight:bold; display:block; margin-bottom:5px;">Cambiar Estado:</label>
+            <select name="nuevo_estado" id="select-estado" class="form-control" onchange="controlarCampos()" required>
+                <option value="1">🟡 Pendiente (Sin revisar)</option>
+                <option value="2">🔵 Asignado (Enviar técnico)</option>
+                <option value="3">🟠 En Proceso (Reparación actual)</option>
+                <option value="4">🟢 Resuelto (Cerrar caso)</option>
+            </select>
+
+            <div id="seccion-tecnico" style="display:none; background: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom:15px;">
                 <label style="font-weight:bold; display:block; margin-bottom:5px; color:var(--uagrm-blue);">👷 Asignar Responsable:</label>
-                
                 <select name="id_tecnico" id="select-tecnicos" class="form-control">
                     <option value="">-- Seleccionar Técnico --</option>
                 </select>
-                
-                <p style="font-size:11px; color:#666; margin:0;">* Solo se muestran técnicos del predio correspondiente.</p>
+                <p style="font-size:11px; color:#666; margin:0;">* Filtrado por predio y especialidad.</p>
             </div>
+
             <button type="submit" class="btn-save">GUARDAR CAMBIOS</button>
-            <button type="button" onclick="cerrarModal()" style="background:none; border:none; color:grey; width:100%; margin-top:10px; cursor:pointer; font-size:13px;">← Cancelar y volver</button>
+            <button type="button" onclick="cerrarModal()" style="background:none; border:none; color:grey; width:100%; margin-top:10px; cursor:pointer;">← Cancelar</button>
         </form>
     </div>
 </div>
 
-
 <script>
-// 1. Guardamos los técnicos en "memoria" de JS al cargar la página
 const listaMaestraTecnicos = [
     <?php foreach($tecnicos as $t): ?>
     {
@@ -165,35 +145,24 @@ const listaMaestraTecnicos = [
         nombre: "<?= $t['nombre'] ?> <?= $t['apellido'] ?>",
         predio: "<?= $t['id_predio'] ?>",
         nombres_espec: "<?= $t['nombres_especialidades'] ?? 'General' ?>",
-        // Convertimos la cadena "1,2,3" en un verdadero array de JavaScript
         ids_espec: "<?= $t['ids_especialidades'] ?>".split(',') 
     },
     <?php endforeach; ?>
 ];
 
 function abrirModal(id, idPredioReporte, idsCategoriasReporte) {
-    // 🚩 Debug: Verificamos qué listas estamos recibiendo
-    console.log("Categorías del reporte:", idsCategoriasReporte);
-
     document.getElementById('modal-id-text').innerText = id;
     document.getElementById('input-id-reporte').value = id;
     
     const selectTec = document.getElementById('select-tecnicos');
     selectTec.innerHTML = '<option value="">-- Seleccionar Técnico --</option>';
     
-    // Convertimos la lista del reporte en un array: "1,8" -> ["1", "8"]
     const categoriasReporte = String(idsCategoriasReporte).split(',');
-
     let especialistasEncontrados = 0;
 
     listaMaestraTecnicos.forEach(tecnico => {
         const mismoPredio = String(tecnico.predio) === String(idPredioReporte);
-        
-        // Verificamos si existe AL MENOS una coincidencia entre las listas
-        // (Si el técnico sabe hacer ALGO de lo que el reporte pide)
-        const esEspecialista = tecnico.ids_espec.some(idEsp => 
-            categoriasReporte.includes(String(idEsp).trim())
-        );
+        const esEspecialista = tecnico.ids_espec.some(idEsp => categoriasReporte.includes(String(idEsp).trim()));
 
         if (mismoPredio && esEspecialista) {
             const el = document.createElement('option');
@@ -204,14 +173,12 @@ function abrirModal(id, idPredioReporte, idsCategoriasReporte) {
         }
     });
 
-    // Plan B: Si no hay nadie específico, cargar a todos los del predio
     if (especialistasEncontrados === 0) {
-        console.warn("Sin especialistas exactos. Cargando personal del predio...");
         listaMaestraTecnicos.forEach(tecnico => {
             if (String(tecnico.predio) === String(idPredioReporte)) {
                 const el = document.createElement('option');
                 el.value = tecnico.id;
-                el.textContent = `${tecnico.nombre} (${tecnico.nombres_espec}) - Gral`;
+                el.textContent = `${tecnico.nombre} (General)`;
                 selectTec.appendChild(el);
             }
         });
@@ -226,25 +193,16 @@ function cerrarModal() {
     document.getElementById('modalGestion').style.display = "none";
 }
 
-/**
- * Controla la visibilidad del técnico según el estado (Asignado/En Proceso)
- */
 function controlarCampos() {
     const estado = document.getElementById('select-estado').value;
-    const seccionTecnico = document.getElementById('seccion-tecnico');
-    const selectTecnicos = document.getElementById('select-tecnicos');
+    const seccion = document.getElementById('seccion-tecnico');
+    const select = document.getElementById('select-tecnicos');
 
-    // Mostramos el técnico solo si el estado es 2 (Asignado) o 3 (En Proceso)
-    if (estado == "2" || estado == "3") {
-        seccionTecnico.style.display = "block";
-        selectTecnicos.required = true;
-    } else {
-        seccionTecnico.style.display = "none";
-        selectTecnicos.required = false;
-    }
+    const mostrar = (estado == "2" || estado == "3");
+    seccion.style.display = mostrar ? "block" : "none";
+    select.required = mostrar;
 }
 </script>
 
 </body>
 </html>
-

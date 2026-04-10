@@ -15,7 +15,7 @@
         .col-foto { width: 75px; }
         .col-detalle { width: 150px; }
         .col-lugar { width: 100px; }
-        .col-desc { width: 180px; } /* Columna de descripción más ancha */
+        .col-desc { width: 180px; } 
         .col-ci { width: 70px; }
         .col-estado { width: 65px; }
 
@@ -26,9 +26,8 @@
 </head>
 <body>
     <?php
-    // FUNCIÓN PARA CONVERTIR IMAGEN A BASE64
     function imgToBase64($path) {
-        if (!file_exists($path)) return ''; // Si no existe la foto, devuelve vacío
+        if (!file_exists($path)) return ''; 
         $type = pathinfo($path, PATHINFO_EXTENSION);
         $data = file_get_contents($path);
         return 'data:image/' . $type . ';base64,' . base64_encode($data);
@@ -68,7 +67,6 @@
         <tbody>
             <?php foreach($reportes as $r): ?>
             <?php 
-                // Convertimos la foto del reporte a Base64
                 $foto_path = $base_path . 'uploads/' . $r['foto'];
                 $foto_base64 = imgToBase64($foto_path);
             ?>

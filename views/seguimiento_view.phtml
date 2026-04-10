@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <title>UAGRM - Seguimiento</title>
     <style>
-        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; }
+        :root { 
+            --uagrm-blue: #004a87; 
+            --uagrm-red: #da291c; 
+        }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         h2 { color: var(--uagrm-blue); border-bottom: 3px solid var(--uagrm-red); padding-bottom: 10px; }
+        
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .search-box { margin-bottom: 30px; background: #eee; padding: 20px; border-radius: 8px; }
+
         input { padding: 10px; width: 70%; border: 1px solid #ccc; border-radius: 5px; }
         button { padding: 10px 20px; background: var(--uagrm-blue); color: white; border: none; border-radius: 5px; cursor: pointer; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
         th { background: #f8f9fa; color: var(--uagrm-blue); }
+        
         .status { padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; color: white; }
         .Pendiente { background: #f1c40f; } .Asignado { background: #3498db; }
         .En { background: #e67e22; } /* Para "En Proceso" */ .Resuelto { background: #2ecc71; }

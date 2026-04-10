@@ -8,6 +8,8 @@ $r_model = new reportes_model();
 $accion = isset($_GET['a']) ? $_GET['a'] : 'login';
 
 switch($accion) {
+
+    // PROCESO: Autenticación de personal autorizado (Admin y Encargados)
     case 'ingresar':
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ci = $_POST['ci'];
@@ -15,11 +17,11 @@ switch($accion) {
 
             $usuario = $u_model->buscar_por_ci($ci); 
 
+            // Validación segura mediante verificación de hash
             if ($usuario && password_verify($pass, $usuario['pass'])) { 
-                // 🔐 Iniciamos la sesión y guardamos datos clave
-                $_SESSION['user_id'] = $usuario['id_usuario'];
-                $_SESSION['nombre'] = $usuario['nombre'];
-                $_SESSION['rol'] = $usuario['rol']; 
+                $_SESSION['user_id']   = $usuario['id_usuario'];
+                $_SESSION['nombre']    = $usuario['nombre'];
+                $_SESSION['rol']       = $usuario['rol']; 
                 $_SESSION['id_predio'] = $usuario['id_predio']; 
 
                 header("Location: index.php?c=admin&a=dashboard");
@@ -31,19 +33,20 @@ switch($accion) {
         }
         break;
 
+    // PROCESO: Finalización de sesión segura
     case 'logout':
         session_destroy(); 
         header("Location: index.php");
         exit();
 
+    // Gestión de Usuarios - Listado administrativo de personal
     case 'gestion':
-        // 🛡️ SEGURIDAD: Solo el admin puede gestionar usuarios
+        // Filtro de seguridad: Acceso restringido a nivel Administrador
         if (!isset($_SESSION['rol']) || $_SESSION['rol'] != 'admin') {
             header("Location: index.php?c=admin&a=dashboard");
             exit();
         }
         
-        // Cargamos los datos necesarios para la vista
         $lista_usuarios = $u_model->get_usuarios_gestion();
         $predios = $r_model->get_predios(); 
         $categorias = $r_model->get_categorias();
@@ -52,15 +55,15 @@ switch($accion) {
         require_once("views/usuarios_view.phtml");
         break;    
 
+    // Gestión de Usuarios - Registro de nuevo personal con valores predefinidos
     case 'guardar':
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $datos = $_POST;
 
-            // 🛠️ LÓGICA DE NEGOCIO:
-            // 1. La contraseña inicial es estándar para todos los nuevos encargados
+            // Se establece una contraseña estándar para el primer acceso del personal
             $datos['pass'] = password_hash('password123', PASSWORD_DEFAULT);
             
-            // 2. El rol se define internamente como 'encargado' para evitar errores
+            // Restricción de rol: Los nuevos registros siempre se crean como encargados
             $datos['rol'] = 'encargado';
             
             $especialidades = isset($_POST['especialidades']) ? $_POST['especialidades'] : [];
@@ -72,8 +75,8 @@ switch($accion) {
         }
         break;
 
+    case 'login':
     default:
         require_once("views/login_view.phtml");
         break;    
 }
-?>

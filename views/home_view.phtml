@@ -4,45 +4,51 @@
     <meta charset="UTF-8">
     <title>UAGRM - Inicio</title>
     <style>
-        :root { --uagrm-blue: #004a87; --uagrm-red: #da291c; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
-        .container { text-align: center; max-width: 800px; padding: 20px; }
-        h1 { color: var(--uagrm-blue); margin-bottom: 40px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .card { 
-            background: white; padding: 40px; border-radius: 15px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-decoration: none;
-            transition: transform 0.3s, border-color 0.3s; border-bottom: 8px solid #ddd;
+        :root { 
+            --uagrm-blue: #004a87; 
+            --uagrm-red: #da291c; 
         }
+
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        h1 { color: var(--uagrm-blue); margin-bottom: 40px; letter-spacing: -1px; }
+
+        .container { text-align: center; max-width: 800px; padding: 20px; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-decoration: none; transition: transform 0.3s; border-bottom: 8px solid #ddd; }
         .card:hover { transform: translateY(-10px); }
+        .card h3 { color: #333; margin: 0 0 10px 0; font-size: 1.4rem; }
+        .card p { color: #666; font-size: 0.9rem; margin: 0; }
+        .icon { font-size: 50px; margin-bottom: 15px; display: block; }
+        
         .reportar { border-color: var(--uagrm-red); }
         .seguimiento { border-color: var(--uagrm-blue); }
-        .card h3 { color: #333; margin-bottom: 10px; font-size: 1.4rem; }
-        .card p { color: #666; font-size: 0.9rem; }
-        .icon { font-size: 50px; margin-bottom: 15px; display: block; }
+
         .admin-access { margin-top: 40px; border-top: 1px solid #ddd; padding-top: 20px; }
         .admin-access a { color: #888; text-decoration: none; font-size: 13px; font-weight: 600; transition: color 0.3s; }
         .admin-access a:hover { color: var(--uagrm-blue); }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>SOFTWARE DE GESTIÓN DE INCIDENCIAS UAGRM</h1>
+        <h1>SISTEMA DE GESTIÓN DE INCIDENCIAS UAGRM</h1>
         <div class="grid">
             <a href="index.php?c=reportes&a=nuevo" class="card reportar">
                 <span class="icon">🛠️</span>
                 <h3>Reportar Daño</h3>
-                <p>Informa sobre problemas de infraestructura en tu módulo.</p>
+                <p>Informa sobre problemas de infraestructura en tu módulo o predio.</p>
             </a>
             <a href="index.php?c=reportes&a=consulta" class="card seguimiento">
                 <span class="icon">🔍</span>
                 <h3>Seguimiento</h3>
-                <p>Consulta el estado de tus reportes enviados con tu CI.</p>
+                <p>Consulta el estado de tus reportes enviados con tu número de CI.</p>
             </a>
         </div>
-         <div class="admin-access">
+        <div class="admin-access">
             <a href="index.php?c=usuarios">🔒 Acceso Personal Autorizado</a>
         </div>
     </div>
+    
 </body>
 </html>

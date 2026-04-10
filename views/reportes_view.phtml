@@ -10,38 +10,13 @@
             --bg-gray: #f4f7f6;
         }
 
-        body { 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background-color: var(--bg-gray); 
-            margin: 0; padding: 20px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-gray); margin: 0; padding: 20px;}
+        h2 { color: var(--uagrm-blue); text-align: center; margin-top: 0; text-transform: uppercase; font-size: 1.5rem;}
 
-        .container { 
-            max-width: 650px; 
-            margin: auto; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 10px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-top: 5px solid var(--uagrm-red);
-        }
-
-        h2 { 
-            color: var(--uagrm-blue); 
-            text-align: center; 
-            margin-top: 0;
-            text-transform: uppercase;
-            font-size: 1.5rem;
-        }
-
+        .container { max-width: 650px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);border-top: 5px solid var(--uagrm-red);}
         .form-group { margin-bottom: 18px; }
         
-        label { 
-            display: block; 
-            font-weight: 600; 
-            margin-bottom: 8px; 
-            color: #444; 
-        }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #444; }
 
         input[type="text"], 
         textarea, 
@@ -54,52 +29,14 @@
             font-size: 14px;
         }
 
-        /* Arreglo de los Checkboxes */
-        .grid-cats { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            background: #f9f9f9; 
-            padding: 15px; 
-            border-radius: 8px;
-            border: 1px solid #eee;
-        }
+        .grid-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f9f9f9; padding: 15px; border-radius: 8px;border: 1px solid #eee; }
+        .cat-item {display: flex;align-items: center;font-size: 14px;cursor: pointer;}
+        .cat-item input {margin-right: 10px;cursor: pointer;width: 18px;height: 18px;}
 
-        .cat-item {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .cat-item input {
-            margin-right: 10px;
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
-        }
-
-        .btn-send { 
-            background: var(--uagrm-blue); 
-            color: white; 
-            border: none; 
-            padding: 15px; 
-            width: 100%; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
+        .btn-send {background: var(--uagrm-blue); color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold;transition: background 0.3s;}
         .btn-send:hover { background: #003366; }
 
-        .footer-info {
-            text-align: center;
-            font-size: 12px;
-            color: #888;
-            margin-top: 20px;
-        }
+        .footer-info {text-align: center;font-size: 12px; color: #888; margin-top: 20px;}
     </style>
 </head>
 <body>
@@ -177,9 +114,7 @@
 </div>
 
 <script>
-/**
- * Filtra los módulos dependiendo del predio seleccionado en el formulario 
- */
+
 function filtrarModulos() {
     const predioSelect = document.getElementById('id_predio');
     const moduloSelect = document.getElementById('id_modulo');
@@ -200,9 +135,6 @@ function filtrarModulos() {
     }
 }
 
-/**
- * Valida que al menos una categoría de la base de datos haya sido seleccionada .
- */
 function validarFormulario() {
     const checkboxes = document.querySelectorAll('input[name="categorias[]"]:checked');
     
